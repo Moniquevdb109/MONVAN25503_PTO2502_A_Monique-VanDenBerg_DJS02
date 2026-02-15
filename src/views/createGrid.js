@@ -1,5 +1,6 @@
-import { createPodcastCard } from "../components/createPodcastCard.js";
 import { createModal } from "../components/createModal.js";
+import { GenreService } from "../utils/GenreService.js";
+import { DateUtils } from "../utils/DateUtils.js";
 
 /**
  * Grid Renderer - Responsible for rendering the grid of podcast cards.
@@ -16,10 +17,22 @@ export const createGrid = () => {
      */
     render(podcastList) {
       container.innerHTML = "";
-      podcastList.forEach((p) => {
-        const card = createPodcastCard(p, createModal.open);
-        container.appendChild(card);
+      podcastList.forEach((podcast) => {
+        const podcastPreview = document.createElement("podcast-preview");
+        
+
+        podcastPreview.setPodcast({
+          ...podcast,
+          genreNames: GenreService.getNames(podcast.genres),
+          formattedDate: DateUtils.format(podcast.updated)
+        });
+
+        podcastPreview.addEventListener("podcast-selected", (e) => {
+          createModal.open(e.detail.podcast);
+        });
+
+        container.appendChild(podcastPreview);
       });
     },
-  };
-};
+  };      
+}
