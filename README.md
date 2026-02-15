@@ -2,63 +2,71 @@
 
 ## Overview
 
-In this project, you will build a reusable and encapsulated **custom HTML element** that displays a podcast preview. The component must follow the **Web Component standard**, using `customElements.define()` and should work independently from the main application logic. This component will enhance modularity, promote reuse, and reduce code duplication across the app.
+For this project, I built a reusable and fully encapsulated **custom HTML element** that displays a podcast preview.  
 
-The component should be designed to **accept podcast data via attributes or properties**, display relevant UI elements (such as title, cover image, and genres), and **communicate with the main application** through custom events.
+My goal was to create a modular component that works independently from the main application logic, reduces duplication, and keeps the codebase clean and maintainable.
 
----
-
-## Core Objectives
-
-### Web Component Functionality
-
-- Create a **custom HTML element** using `customElements.define()`.
-- Accept data (cover image, title, genres, number of seasons, and last updated date) **as attributes or properties**.
-- Keep the component **stateless** and reliant on external data provided by the parent.
-- Use **Shadow DOM** for style and logic encapsulation to avoid global conflicts.
-- Trigger a **custom event** when a user interacts with the component (e.g., clicking), so that the parent application can open a modal or take other actions without tightly coupling to the component’s logic.
+I used the native **Web Component standard** with `customElements.define()` and implemented Shadow DOM to properly isolate structure and styles.
 
 ---
 
-## UI/UX Requirements
+## What I Built
 
-- The component should render a clean and **visually consistent preview** of each podcast.
-- Display:
-  - Podcast **cover image**
-  - Podcast **title**
-  - **Genre names**
-  - **Number of seasons**
-  - **Last updated** in a human-readable format
-- The component must be **responsive**, and match the overall app design on desktop and mobile.
-- On click, the component must notify the parent app to **open a modal** or navigate to details.
+I created a custom element that:
 
----
+- Accepts podcast data via **attributes or properties**
+- Displays:
+  - Cover image
+  - Podcast title
+  - Genre names
+  - Number of seasons
+  - Last updated date (formatted for readability)
+- Uses **Shadow DOM** for full encapsulation
+- Dispatches a **custom event** when clicked so the parent app can handle actions (like opening a modal)
 
-## Code Quality & Maintainability
-
-- Write clear, consistent, and modular code.
-- Follow **functional and object-oriented programming** patterns.
-- Document major functions using **JSDoc comments** (parameters, return types, etc.).
-- Use consistent **code formatting** across HTML, CSS, and JavaScript.
+The component itself is stateless and depends entirely on the data passed into it.
 
 ---
 
-## Technical Constraints
+## Technical Approach
 
-- Do **not** use any third-party frameworks for creating the web component.
-- Use **native JavaScript (ES6+)**, HTML, and CSS.
-- No page reloads or navigation.
-- Ensure compatibility with modern browsers.
+- Used **Vanilla JavaScript (ES6+)**
+- Registered the component using `customElements.define()`
+- Attached a **Shadow Root** to prevent style leakage
+- Kept logic self-contained and modular
+- Used custom events to avoid tight coupling with the main application
+- Followed clean formatting and added JSDoc comments where necessary
+
+No third-party libraries or frameworks were used.
+
+---
+
+## Key Features
+
+- Reusable and scalable design
+- Fully encapsulated styling
+- Responsive layout (desktop and mobile friendly)
+- Clean separation between UI component and app logic
+- Easy to integrate into any project
 
 ---
 
-## Deliverables
+## How to Use
 
-- A working custom Web Component file (e.g., `PodcastPreview.js`).
-- An HTML demo page showcasing the component usage.
-- A `README.md` file with:
-  - How to use and register the component
-  - Instructions for passing data
-  - How to listen for interaction events
+1. Import the component file (e.g., `PodcastPreview.js`)
+2. Register it automatically via `customElements.define()`
+3. Pass in podcast data as attributes or properties
+4. Listen for the custom event to handle user interaction
 
 ---
+
+## Final Thoughts
+
+This project helped me solidify my understanding of:
+
+- Web Components
+- Shadow DOM
+- Custom events
+- Component-based architecture using native JavaScript
+
+I focused on writing clean, modular, and reusable code that could realistically scale in a production environment.
