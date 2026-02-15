@@ -1,7 +1,13 @@
 import { GenreService } from "../utils/GenreService.js";
 import { DateUtils } from "../utils/DateUtils.js";
 
-// template for the podcast preview card
+/**
+ * Template containing the markup and styles for the podcast preview card.
+ * Created once and cloned for each component instance to improve performance.
+ * Uses Shadow DOM to encapsulate styles and prevent CSS conflicts.
+ * 
+ * @constant {HTMLTemplateElement}
+ */
 const template = document.createElement("template");
 template.innerHTML = `
   <style>
@@ -71,15 +77,53 @@ template.innerHTML = `
   </div>
 `;
 
-// PodcastPreview Web Component
+/**
+ * PodcastPreview Web Component
+ * 
+ * A reusable, self-contained custom HTML element for displaying podcast preview cards.
+ * Implements the Web Component standard using Shadow DOM for encapsulation.
+ * 
+ * @class PodcastPreview
+ * @extends HTMLElement
+ * 
+ * @element podcast-preview
+ * 
+ * @fires podcast-selected - Dispatched when the user clicks on the card.
+ * Event detail contains the complete podcast data object.
+ * 
+ * @property {Object} _podcast - Internal storage for podcast data (private)
+ * @property {Object} elements - References to Shadow DOM elements for efficient updates
+ * 
+ */
 class PodcastPreview extends HTMLElement {
   
+    /**
+   * Creates an instance of PodcastPreview.
+   * Initializes the Shadow DOM and clones the template for style encapsulation.
+   * Sets up references to key DOM elements for efficient updates.
+   * 
+   * @constructor
+   */
   constructor() {
     super();
+    // Attach a shadow root to the element and clone the template content into it
     const shadow = this.attachShadow({ mode: "open" });
+    // Clone the template content and append it to the shadow root
+    // cloneNode(true) creates a deep copy including all child nodes
     shadow.appendChild(template.content.cloneNode(true));
 
-    // object to hold references to key elements for easy updates
+     /**
+     * Object containing references to DOM elements inside the Shadow DOM.
+     * Storing references improves performance by avoiding repeated querySelector calls.
+     * 
+     * @type {Object.<string, HTMLElement>}
+     * @property {HTMLDivElement} card - The main card container
+     * @property {HTMLImageElement} img - The podcast cover image
+     * @property {HTMLHeadingElement} title - The podcast title heading
+     * @property {HTMLParagraphElement} seasons - The seasons count paragraph
+     * @property {HTMLDivElement} tags - The genre tags container
+     * @property {HTMLParagraphElement} updated - The last updated date paragraph
+     */
     this.elements = {
       card: shadow.querySelector(".card"),
       img: shadow.querySelector("img"),
@@ -90,13 +134,42 @@ class PodcastPreview extends HTMLElement {
     };
   }
 
-  // method to set the podcast data and trigger rendering
+    /**
+   * Sets the podcast data and triggers UI rendering.
+   * This method accepts podcast data from the parent application,
+   * which may include pre-formatted genre names and dates.
+   * 
+   * @param {Object} podcast - The podcast data object
+   * @param {string} podcast.id - Unique podcast identifier
+   * @param {string} podcast.title - Podcast title
+   * @param {string} podcast.image - URL to podcast cover image
+   * @param {number} podcast.seasons - Number of seasons
+   * @param {number[]} podcast.genres - Array of genre IDs
+   * @param {string[]} [podcast.genreNames] - Pre-formatted genre names (optional)
+   * @param {string} podcast.updated - ISO date string of last update
+   * @param {string} [podcast.formattedDate] - Pre-formatted date string (optional)
+   * 
+   * });
+   */
+
   setPodcast(podcast) {
+    // Store the podcast data in a private property for later use in rendering
     this._podcast = podcast;
+    // Render the podcast data into the card UI
     this.renderPodcast();
   }
-
- // method to render the podcast data into the card
+  /**
+   * Renders the podcast data into the Shadow DOM.
+   * Updates all UI elements with current podcast information.
+   * Resolves genre names and formats dates if not already provided.
+   * Attaches a click event listener to dispatch a custom event.
+   * 
+   * @private
+   * 
+   * @fires podcast-selected - Custom event with podcast data in event.detail
+   * 
+   * @returns {void}
+   */
   renderPodcast() {
     if (!this._podcast) return;
 
@@ -106,16 +179,27 @@ class PodcastPreview extends HTMLElement {
     
     const displayDate = formattedDate || DateUtils.format(updated);
 
+    // Update the DOM elements with the podcast data
     this.elements.img.src = image;
     this.elements.img.alt = `${title} cover`;
     this.elements.title.textContent = title;
     this.elements.seasons.textContent = `${seasons} season${seasons > 1 ? "s" : ""}`;
     this.elements.tags.innerHTML = resolvedGenreNames
+    // Generate genre tags HTML
+    // Map each genre name to a <span> tag and join into a single string
       .map((g) => `<span class="tag">${g}</span>`)
       .join("");
+      // Set the formatted date text content
     this.elements.updated.textContent = displayDate;
 
-    // add click event listener to dispatch a custom event when the card is clicked
+    /**
+     * Attach click event listener to the card.
+     * Dispatches a custom 'podcast-selected' event that bubbles up the DOM
+     * and crosses the Shadow DOM boundary (composed: true).
+     * 
+     * The event detail contains the complete podcast object,
+     * allowing parent components to access all podcast data.
+     */
     this.elements.card.onclick = () => {
       this.dispatchEvent(
         new CustomEvent("podcast-selected", {
@@ -128,7 +212,7 @@ class PodcastPreview extends HTMLElement {
   }
 }
 
-// register the custom element so it can be used in HTML as <podcast-preview>
+
 customElements.define("podcast-preview", PodcastPreview);
 
 export { PodcastPreview };
